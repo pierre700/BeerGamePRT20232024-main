@@ -6,9 +6,9 @@ div.grid_play {
   align-items: center;
 }
 div.grid_play div.playground {
-  width: 75%;
-  margin-left: 12.5%;
-  margin-right: 12.5%;
+  width: 85%;
+  margin-left: 7.5%;
+  margin-right: 7.5%;
   background-color: #ecf0f1;
   border: 1px solid #bdc3c7;
   border-radius: 3px;
@@ -41,7 +41,7 @@ div.grid_play div.new_order span {
 div.grid_play div.new_delay {
   padding: 15px;
   display: grid;
-  grid-template-columns: 100px 75px 75px 75px 75px 125px;
+  grid-template-columns: 125px 12% 12% 12% 12% 12% 125px;
   grid-gap: 30px;
 }
 div.grid_play div.new_delay span {
@@ -51,7 +51,7 @@ div.grid_play div.new_delay span {
 div.grid_play div.etat_stock {
   padding: 15px;
   display: grid;
-  grid-template-columns: 100px 75px 75px 75px 75px;
+  grid-template-columns: 125px 12% 12% 12% 12%;
   grid-gap: 30px;
 }
 div.grid_play div.etat_stock span {
@@ -148,9 +148,9 @@ div.grid_play3 {
 }
 div.grid_play3 div.playground3 {
   grid-row-start: 2;
-  width: 75%;
-  margin-left: 12.5%;
-  margin-right: 12.5%;
+  width: 85%;
+  margin-left: 7%;
+  margin-right: 7.5%;
   background-color: #ecf0f1;
   border: 1px solid #bdc3c7;
   border-radius: 3px;
@@ -158,5 +158,9 @@ div.grid_play3 div.playground3 {
   display: inline-block;
   grid-gap: 15px;
   height: fit-content;
+}
+div.grid_play3 div.select_graph {
+  display: flex;
+  align-items: center;
 }
 /*# sourceMappingURL=PlayGame.css.map */

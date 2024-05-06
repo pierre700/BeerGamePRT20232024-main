@@ -1,13 +1,13 @@
 export default function Moyenne_Lissage(roleID, currentRound, nbRound, role, nextRole, dmdCli){
     let somme = 0
-    let moyAttente = "en attente"
+    let moyAttente = 0
     let moy = 0
     let liss = [Number(role[currentRound].lissage[0]), Number(role[currentRound].lissage[1])]
     let alpha1 = 0.1
     let alpha2 = 0.2
 
     if(currentRound < nbRound){
-        moyAttente = "en attente"
+        moyAttente = 0
         if (roleID === 4){
             liss = [liss[0] + alpha1 * (dmdCli[currentRound] - liss[0]), liss[1] + alpha2 * (dmdCli[currentRound] - liss[1])]
         }

@@ -133,7 +133,11 @@ const DBGame = new Schema({
         }, 
         buffer: {
             type: Array
+        },
+        stockList: {
+            type: Array
         }
+        
     },
 })
 

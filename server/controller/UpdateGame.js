@@ -5,6 +5,12 @@ import CalculateNewValues from "../functions/CalculateNewValues.js";
 import fillBuffer from "../functions/fillBuffer.js";
 import selectCommande from "../functions/selectCommande.js";
 import Moyenne_Lissage from "../functions/Moyenne_Lissage.js";
+import fillListStock from "../functions/fillListStock.js";
+import fillListRupture from "../functions/fillListRupture.js";
+import fillListCommande from "../functions/fillListCommande.js";
+import fillListDemande from "../functions/fillListDemande.js";
+import fillListMoy from "../functions/fillListMoy.js";
+import fillListLissage from "../functions/fillListLissage.js";
 
 export default function UpdateGame(io, socket, intData) {
     const room = intData.gameCode
@@ -14,6 +20,7 @@ export default function UpdateGame(io, socket, intData) {
     const distributorDelay = parseInt(intData.distributorDelay)
     const wholesalerDelay = parseInt(intData.wholesalerDelay)
     const retailerDelay = parseInt(intData.retailerDelay)
+    const consommation = parseInt(intData.consommation)
     const GameData = mongoose.model("DBGame", DBGame)
     console.log(producerDelay, distributorDelay, wholesalerDelay, retailerDelay)
 
@@ -45,8 +52,14 @@ export default function UpdateGame(io, socket, intData) {
                         receptionNext: [0, 0, 0, 0],
                         receptionReel: 0, 
                         moyenne: "En attente",
-                        lissage: [0, 0],
-                        cost: 0
+                        lissage: [10, 10],
+                        cost: 0,
+                        listStock: [data.gameSettings.startStock],
+                        listRupture: [0],
+                        listCommande: [0],
+                        listDemande: [0],
+                        listMoy: [0],
+                        listLissage: [10]
                     })
                     data.roundData.buffer.push({
                         bufferProd: bufferProducer, 
@@ -63,8 +76,14 @@ export default function UpdateGame(io, socket, intData) {
                         receptionNext : [0, 0, 0, 0],
                         receptionReel: 0, 
                         moyenne: "En attente",
-                        lissage: [0, 0], 
-                        cost: 0
+                        lissage: [10, 10], 
+                        cost: 0,
+                        listStock: [data.gameSettings.startStock],
+                        listRupture: [0],
+                        listCommande: [0],
+                        listDemande: [0],
+                        listMoy: [0],
+                        listLissage: [10]
                     })
                     break
                 case 3:
@@ -75,8 +94,14 @@ export default function UpdateGame(io, socket, intData) {
                         receptionNext : [0, 0, 0, 0],
                         receptionReel: 0, 
                         moyenne: "En attente",
-                        lissage: [0, 0],
-                        cost: 0
+                        lissage: [10, 10],
+                        cost: 0,
+                        listStock: [data.gameSettings.startStock],
+                        listRupture: [0],
+                        listCommande: [0],
+                        listDemande: [0],
+                        listMoy: [0],
+                        listLissage: [10]
                     })
                     break
                 case 4:
@@ -87,8 +112,14 @@ export default function UpdateGame(io, socket, intData) {
                         receptionNext : [0, 0, 0, 0],
                         receptionReel: 0, 
                         moyenne: "En attente",
-                        lissage: [0, 0],
-                        cost: 0
+                        lissage: [10, 10],
+                        cost: 0,
+                        listStock: [data.gameSettings.startStock],
+                        listRupture: [0],
+                        listCommande: [0],
+                        listDemande: [0],
+                        listMoy: [0],
+                        listLissage: [10]
                     })
                     break
                 case 5: 
@@ -112,7 +143,13 @@ export default function UpdateGame(io, socket, intData) {
                         receptionReel: producer[currentRound-1].receptionReel,
                         moyenne: producer[currentRound-1].moyenne,
                         lissage: producer[currentRound-1].lissage,
-                        cost: producer[currentRound-1].cost
+                        cost: producer[currentRound-1].cost,
+                        listStock: producer[currentRound-1].listStock,
+                        listRupture: producer[currentRound-1].listRupture,
+                        listCommande: producer[currentRound-1].listCommande,
+                        listDemande: producer[currentRound-1].listDemande,
+                        listMoy: producer[currentRound-1].listMoy,
+                        listLissage: producer[currentRound-1].listLissage
                         //selectCommande(currentRound , data.roundData.buffer[currentRound-1].bufferProd)
                     })
                     break
@@ -125,7 +162,13 @@ export default function UpdateGame(io, socket, intData) {
                         receptionReel: distributor[currentRound-1].receptionReel,
                         moyenne: distributor[currentRound-1].moyenne,
                         lissage: distributor[currentRound-1].lissage,
-                        cost: distributor[currentRound-1].cost
+                        cost: distributor[currentRound-1].cost,
+                        listStock: distributor[currentRound-1].listStock,
+                        listRupture: distributor[currentRound-1].listRupture,
+                        listCommande: distributor[currentRound-1].listCommande,
+                        listDemande: distributor[currentRound-1].listDemande,
+                        listMoy: distributor[currentRound-1].listMoy,
+                        listLissage: distributor[currentRound-1].listLissage
                         //selectCommande(currentRound , data.roundData.buffer[currentRound-1].bufferDistr)
                     })
                     break
@@ -138,7 +181,13 @@ export default function UpdateGame(io, socket, intData) {
                         receptionReel: wholesaler[currentRound-1].receptionReel,
                         moyenne: wholesaler[currentRound-1].moyenne,
                         lissage: wholesaler[currentRound-1].lissage,
-                        cost: wholesaler[currentRound-1].cost
+                        cost: wholesaler[currentRound-1].cost,
+                        listStock: wholesaler[currentRound-1].listStock,
+                        listRupture: wholesaler[currentRound-1].listRupture,
+                        listCommande: wholesaler[currentRound-1].listCommande,
+                        listDemande: wholesaler[currentRound-1].listDemande,
+                        listMoy: wholesaler[currentRound-1].listMoy,
+                        listLissage: wholesaler[currentRound-1].listLissage
                         //selectCommande(currentRound , data.roundData.buffer[currentRound-1].bufferWhole)
                     })
                     break
@@ -151,7 +200,13 @@ export default function UpdateGame(io, socket, intData) {
                         receptionReel: retailer[currentRound-1].receptionReel,
                         moyenne: retailer[currentRound-1].moyenne,
                         lissage: retailer[currentRound-1].lissage,
-                        cost: retailer[currentRound-1].cost
+                        cost: retailer[currentRound-1].cost,
+                        listStock: retailer[currentRound-1].listStock,
+                        listRupture: retailer[currentRound-1].listRupture,
+                        listCommande: retailer[currentRound-1].listCommande,
+                        listDemande: retailer[currentRound-1].listDemande,
+                        listMoy: retailer[currentRound-1].listMoy,
+                        listLissage: retailer[currentRound-1].listLissage,
                          //selectCommande(currentRound , data.roundData.buffer[currentRound-1].bufferRetail)
                     })
                     break
@@ -208,7 +263,7 @@ export default function UpdateGame(io, socket, intData) {
                 //Todo: If calculated demand is negative, put the demand at 0
                 demandClient = Math.round(sinCoeffB*Math.sin(2*3.14*sinFreqB*currentRound+sinPhaseB)+sinShiftB)
             }
-            data.roundData.demandClient = demandClient
+            data.roundData.demandClient = demandClient*(consommation/100)
             data.roundData.demandClientList.push(demandClient)
 
 
@@ -263,10 +318,40 @@ export default function UpdateGame(io, socket, intData) {
             wholesaler[currentRound].cost = wholesaler[currentRound].stock + 2 * wholesaler[currentRound].retard 
             retailer[currentRound].cost = retailer[currentRound].stock + 2 * retailer[currentRound].retard
 
+            producer[currentRound].listStock = fillListStock(currentRound, data.roundData.producer)
+            distributor[currentRound].listStock = fillListStock(currentRound, data.roundData.distributor)
+            wholesaler[currentRound].listStock = fillListStock(currentRound, data.roundData.wholesaler)
+            retailer[currentRound].listStock = fillListStock(currentRound, data.roundData.retailer)
+
+            producer[currentRound].listRupture = fillListRupture(currentRound, data.roundData.producer)
+            distributor[currentRound].listRupture = fillListRupture(currentRound, data.roundData.distributor)
+            wholesaler[currentRound].listRupture = fillListRupture(currentRound, data.roundData.wholesaler)
+            retailer[currentRound].listRupture = fillListRupture(currentRound, data.roundData.retailer)
+
+            producer[currentRound].listCommande = fillListCommande(currentRound, data.roundData.producer)
+            distributor[currentRound].listCommande = fillListCommande(currentRound, data.roundData.distributor)
+            wholesaler[currentRound].listCommande = fillListCommande(currentRound, data.roundData.wholesaler)
+            retailer[currentRound].listCommande = fillListCommande(currentRound, data.roundData.retailer)
+
+            producer[currentRound].listDemande = fillListDemande(currentRound, data.roundData.distributor, 1, 0)
+            distributor[currentRound].listDemande = fillListDemande(currentRound, data.roundData.wholesaler, 2, 0)
+            wholesaler[currentRound].listDemande = fillListDemande(currentRound, data.roundData.retailer, 3, 0)
+            retailer[currentRound].listDemande = fillListDemande(currentRound, data.roundData.retailer, 4, demandClient)
+
             Moyenne_Lissage(1, currentRound, 4, producer, distributor, data.roundData.demandClientList)
             Moyenne_Lissage(2, currentRound, 4, distributor, wholesaler, data.roundData.demandClientList)
             Moyenne_Lissage(3, currentRound, 4, wholesaler, retailer, data.roundData.demandClientList)
             Moyenne_Lissage(4, currentRound, 4, retailer, false, data.roundData.demandClientList)
+
+            producer[currentRound].listLissage = fillListLissage(currentRound, data.roundData.producer)
+            distributor[currentRound].listLissage = fillListLissage(currentRound, data.roundData.distributor)
+            wholesaler[currentRound].listLissage = fillListLissage(currentRound, data.roundData.wholesaler)
+            retailer[currentRound].listLissage = fillListLissage(currentRound, data.roundData.retailer)
+
+            producer[currentRound].listMoy = fillListMoy(currentRound, data.roundData.producer)
+            distributor[currentRound].listMoy = fillListMoy(currentRound, data.roundData.distributor)
+            wholesaler[currentRound].listMoy = fillListMoy(currentRound, data.roundData.wholesaler)
+            retailer[currentRound].listMoy = fillListMoy(currentRound, data.roundData.retailer)
 
             data.roundData.currentRound++
             data.roundData.producer = producer

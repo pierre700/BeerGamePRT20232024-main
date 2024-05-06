@@ -32,7 +32,7 @@ function NewGame(props) {
     const [sinShift, setSinShift] = useState(0)
 
     const [selectRoleMenu, setSelectRoleMenu] = useState(false)
-    const [disabledRoles, setDisabledRoles] = useState([0,0,0,0])
+    const [disabledRoles, setDisabledRoles] = useState([0,0,0,0,0])
 
     const [inputError, setInputError] = useState(false)
 

@@ -100,7 +100,7 @@ def playGame(rounds, driverList):
 
 
 file = "Game_Code.txt"
-roundsValue = 2
+roundsValue = 5
 startStockValue = 3
 delayValue = 1
 typeDemandXpath = "//input[@id='{const}']"

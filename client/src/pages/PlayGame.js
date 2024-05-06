@@ -2,7 +2,10 @@ import "../styles/pages/PlayGame.css"
 import InputField from "../components/form/InputField"
 import checkIfStringIsValid from "../lib/checkIfStringIsValid"
 import {useEffect, useState} from "react"
-import BarChart from "../components/BarChart"
+import Tile from "../components/Tile"
+import React from 'react'
+import 'chart.js/auto'
+import { Line, defaults } from 'react-chartjs-2'
 import Button from "../components/form/Button";
 
 
@@ -23,6 +26,7 @@ function PlayGame(props) {
     const [distributorDelay, setDistributorDelay] = useState("")
     const [wholesalerDelay, setWholesalerDelay] = useState("")
     const [retailerDelay, setRetailerDelay] = useState("")
+    const [consommation, setConsommation] = useState("")
     const [inputActive, setInputActive] = useState(true) //Active ou désactive le champ de saisie de la commande
     const [currentRoomSize, setCurrentRoomSize] = useState(0) //Joueurs actuels dans le jeu
     const [currentRoomRoles, setCurrentRoomRoles] = useState([]) //Rôles déjà occupés
@@ -34,6 +38,12 @@ function PlayGame(props) {
     const [stock2, setStock2] = useState(0)
     const [stock3, setStock3] = useState(0)
     const [stock4, setStock4] = useState(0)
+    const [listStock, setListStock] = useState([])
+    const [listRupture, setListRupture] = useState([])
+    const [listCommande, setListCommande] = useState([])
+    const [listDemande, setListDemande] = useState([])
+    const [listMoy, setListMoy] = useState([])
+    const [listLissage, setListLissage] = useState([])
     const [stockNext, setStockNext] = useState([])
     const [stockNext2, setStockNext2] = useState([])
     const [retard, setRetard] = useState(0) //Retard
@@ -43,10 +53,12 @@ function PlayGame(props) {
     const [supplyChainOrder, setSupplyChainOrder] = useState(0) //Demande de livraison
     const [moyenne, setMoyenne] = useState(0)
     const [lissage, setLissage] = useState([])
+    const [selectedGraph, setSelectedGraph] = useState(0)
 
     const [inputError, setInputError] = useState(false)
 
     const[dataV, setDataV] = useState(0)    
+
 
     useEffect(() => {
       // Update_Player_Data: Appelé quand tout le monde a passé la commande.
@@ -60,6 +72,12 @@ function PlayGame(props) {
             setInputActive(true)
             if(selectedRole === 1) {
                 setStock(data.roundData.producer[data.roundData.currentRound-1].stock)
+                setListStock(data.roundData.producer[data.roundData.currentRound-1].listStock)
+                setListRupture(data.roundData.producer[data.roundData.currentRound-1].listRupture)
+                setListCommande(data.roundData.producer[data.roundData.currentRound-1].listCommande)
+                setListDemande(data.roundData.producer[data.roundData.currentRound-1].listDemande)
+                setListMoy(data.roundData.producer[data.roundData.currentRound-1].listMoy)
+                setListLissage(data.roundData.producer[data.roundData.currentRound-1].listLissage)
                 setRetard(data.roundData.producer[data.roundData.currentRound-1].retard)
                 setNext1WeekDelivery(data.roundData.producer[data.roundData.currentRound-1].next1Week)
                 setNext2WeekDelivery(data.roundData.producer[data.roundData.currentRound-1].next2Week)
@@ -69,9 +87,16 @@ function PlayGame(props) {
                 setCommRecue(data.roundData.producer[data.roundData.currentRound-1].receptionReel)
                 setMoyenne(data.roundData.producer[data.roundData.currentRound-1].moyenne)
                 setLissage(data.roundData.producer[data.roundData.currentRound-1].lissage)
+
             }
             else if(selectedRole === 2) {
                 setStock(data.roundData.distributor[data.roundData.currentRound-1].stock)
+                setListStock(data.roundData.distributor[data.roundData.currentRound-1].listStock)
+                setListRupture(data.roundData.distributor[data.roundData.currentRound-1].listRupture)
+                setListCommande(data.roundData.distributor[data.roundData.currentRound-1].listCommande)
+                setListDemande(data.roundData.distributor[data.roundData.currentRound-1].listDemande)
+                setListMoy(data.roundData.distributor[data.roundData.currentRound-1].listMoy)
+                setListLissage(data.roundData.distributor[data.roundData.currentRound-1].listLissage)
                 setRetard(data.roundData.distributor[data.roundData.currentRound-1].retard)
                 setNext1WeekDelivery(data.roundData.distributor[data.roundData.currentRound-1].next1Week)
                 setNext2WeekDelivery(data.roundData.distributor[data.roundData.currentRound-1].next2Week)
@@ -84,6 +109,12 @@ function PlayGame(props) {
             }
             else if(selectedRole === 3) {
                 setStock(data.roundData.wholesaler[data.roundData.currentRound-1].stock)
+                setListStock(data.roundData.wholesaler[data.roundData.currentRound-1].listStock)
+                setListRupture(data.roundData.wholesaler[data.roundData.currentRound-1].listRupture)
+                setListCommande(data.roundData.wholesaler[data.roundData.currentRound-1].listCommande)
+                setListDemande(data.roundData.wholesaler[data.roundData.currentRound-1].listDemande)
+                setListMoy(data.roundData.wholesaler[data.roundData.currentRound-1].listMoy)
+                setListLissage(data.roundData.wholesaler[data.roundData.currentRound-1].listLissage)
                 setRetard(data.roundData.wholesaler[data.roundData.currentRound-1].retard)
                 setNext1WeekDelivery(data.roundData.wholesaler[data.roundData.currentRound-1].next1Week)
                 setNext2WeekDelivery(data.roundData.wholesaler[data.roundData.currentRound-1].next2Week)
@@ -96,6 +127,12 @@ function PlayGame(props) {
             }
             else if(selectedRole ===4) {
                 setStock(data.roundData.retailer[data.roundData.currentRound-1].stock)
+                setListStock(data.roundData.retailer[data.roundData.currentRound-1].listStock)
+                setListRupture(data.roundData.retailer[data.roundData.currentRound-1].listRupture)
+                setListCommande(data.roundData.retailer[data.roundData.currentRound-1].listCommande)
+                setListDemande(data.roundData.retailer[data.roundData.currentRound-1].listDemande)
+                setListMoy(data.roundData.retailer[data.roundData.currentRound-1].listMoy)
+                setListLissage(data.roundData.retailer[data.roundData.currentRound-1].listLissage)
                 setRetard(data.roundData.retailer[data.roundData.currentRound-1].retard)
                 setNext1WeekDelivery(data.roundData.retailer[data.roundData.currentRound-1].next1Week)
                 setNext2WeekDelivery(data.roundData.retailer[data.roundData.currentRound-1].next2Week)
@@ -114,6 +151,7 @@ function PlayGame(props) {
 
             
         })
+
         socket.on("initial_data", (data) => {
             console.log(data)
             setGameRounds(data.gameSettings.rounds)
@@ -122,17 +160,28 @@ function PlayGame(props) {
             setStock2(data.gameSettings.startStock)
             setStock3(data.gameSettings.startStock)
             setStock4(data.gameSettings.startStock)
+            setListStock([data.gameSettings.startStock])
+            setListRupture([0])
+            setListCommande([0])
+            setListDemande([0])
+            setListMoy([0])
+            setListLissage([10])
             setCommRecue(0)
             setStockNext([0, 0, 0, 0])
             setStockNext2([0, 0, 0, 0])
             setMoyenne("En attente")
-            setLissage([0, 0])
+            setLissage([10, 10])
         })
+
+
         socket.on("update_room_size", (data) => {
             setCurrentRoomSize(data.roomSize)
             setCurrentRoomRoles(data.selectedRoles)
         })
     })
+
+    let listRound = []
+    for (let i=0; i <= gameRounds; i++){listRound.push(i)}
 
     function submitOrder() {
         if (checkIfStringIsValid(orderValue, "numeric")){
@@ -151,7 +200,7 @@ function PlayGame(props) {
     }
 
     function submitDelay() {
-        if (checkIfStringIsValid(producerDelay, "numeric") && checkIfStringIsValid(distributorDelay, "numeric") && checkIfStringIsValid(wholesalerDelay, "numeric") && checkIfStringIsValid(retailerDelay, "numeric")){
+        if (checkIfStringIsValid(producerDelay, "numeric") && checkIfStringIsValid(distributorDelay, "numeric") && checkIfStringIsValid(wholesalerDelay, "numeric") && checkIfStringIsValid(retailerDelay, "numeric") && checkIfStringIsValid(consommation, "numeric")){
             setInputActive(false)
             socket.emit("game_update", {
                 gameCode, 
@@ -159,12 +208,14 @@ function PlayGame(props) {
                 producerDelay,
                 distributorDelay,
                 wholesalerDelay,
-                retailerDelay
+                retailerDelay,
+                consommation
             })
             setProducerDelay("")
             setDistributorDelay("")
             setWholesalerDelay("")
             setRetailerDelay("")
+            setConsommation("")
         }
         else{
             alert("Vous devez choisir des délais valides ")
@@ -193,6 +244,13 @@ function PlayGame(props) {
         let orderInputAndButton = <></>
         let delayInputAndButton = <></>
         let toSend = <></>
+        let graph = <></>
+        let graph1 = <></>
+        let graph2 = <></>
+        let graph3 = <></>
+        let graph4 = <></>
+        let graph5 = <></>
+        let graph6 = <></>
         if(inputActive) {
             delayInputAndButton = (
                 <>
@@ -218,6 +276,12 @@ function PlayGame(props) {
                         name={"retailerDelay"}
                         getValue={setRetailerDelay}
                         setValue={retailerDelay}
+                        description={"Allowed Characters: 0-9"}
+                    />
+                    <InputField
+                        name={"Conso en %"}
+                        getValue={setConsommation}
+                        setValue={consommation}
                         description={"Allowed Characters: 0-9"}
                     />
                     <Button onClick={submitDelay}>Valider</Button>
@@ -266,6 +330,13 @@ function PlayGame(props) {
                         description={"Allowed Characters: 0-9"}
                         disabled={true}
                     />
+                    <InputField
+                        name={"Conso en %"}
+                        getValue={setConsommation}
+                        setValue={consommation}
+                        description={"Allowed Characters: 0-9"}
+                        disabled={true}
+                    />
                     <Button onClick={submitDelay}>Valider</Button>
                 </>
             )
@@ -285,7 +356,7 @@ function PlayGame(props) {
                 </>
             )
         }
-        if(selectedRole < 4){
+        if(selectedRole <= 4){
             toSend = (
                 <>
                 <div className={"line"} />
@@ -298,6 +369,116 @@ function PlayGame(props) {
                         </div>
                 </>
             )
+            graph1 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Stock en unité',
+                        data: listStock,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            graph2 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Rupture de stock en unité',
+                        data: listRupture,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            graph3 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Commande auprès du fournisseur en unité',
+                        data: listCommande,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            graph4 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Demande du client en unité',
+                        data: listDemande,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            graph5 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Moyenne des demade du client sur les 4 derniers tours en unité',
+                        data: listMoy,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            graph6 = (
+                <>
+                <div>
+                <Line
+                    data={{
+                    labels: listRound,
+                    datasets: [
+                        {
+                        label: 'Lissage exponentielle de la demande du client en unité',
+                        data: listLissage,
+                        },
+                    ],
+                    }}
+                />
+                </div>
+                </>
+            )
+            if (selectedGraph === 1){ graph = graph1}
+            else if (selectedGraph === 2){ graph = graph2}
+            else if (selectedGraph === 3){ graph = graph3}
+            else if (selectedGraph === 4){ graph = graph4}
+            else if (selectedGraph === 5){ graph = graph5}
+            else if (selectedGraph === 6){ graph = graph6}
+            else { graph = (<></>)}
+
         }
         else{
             toSend = (
@@ -305,7 +486,7 @@ function PlayGame(props) {
                 <div className={"line"} />
                         <span>A Envoyé :</span>
                         <div className={"next_products"}>
-                            <span>Envoie : {supplyChainOrder}</span>
+                            <span>Envoi : {supplyChainOrder}</span>
                         </div>
                 </>
             )
@@ -363,6 +544,7 @@ function PlayGame(props) {
                             <span>Grossiste: {stock3} </span>
                             <span>Détaillant: {stock4} </span>
                         </div>
+                        <div className={"line"} />
                     </div>
                   </div>
                 </div>
@@ -419,8 +601,57 @@ function PlayGame(props) {
 
                         <div className={"grid_play3"}>
                             <div className={"playground3"}>
-                                <span>Afficher des graphiques, à venir</span>
-                                <graph />
+                                <div className={"select_graph"}>
+                                <Tile 
+                                    name={"graph1"}
+                                    imgSrc={"/icons/stockage_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={1}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Graphique des stocks</Tile>
+                                <Tile   
+                                    name={"graph2"}                            
+                                    imgSrc={"/icons/rupture_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={2}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Graphique des ruptures de stock</Tile>
+                                <Tile      
+                                    name={"graph3"}                       
+                                    imgSrc={"/icons/commande_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={3}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Graphique des commandes au fournisseur</Tile>
+                                <Tile       
+                                    name={"graph4"}                       
+                                    imgSrc={"/icons/demande_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={4}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Graphique des demandes du client</Tile>
+                                <Tile       
+                                    name={"graph5"}                       
+                                    imgSrc={"/icons/moyenne_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={5}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Moyenne des demandes</Tile>
+                                <Tile       
+                                    name={"graph6"}                       
+                                    imgSrc={"/icons/lissage_image.svg"}
+                                    imgAlt={"New Game"}
+                                    idKey={6}
+                                    getValue={setSelectedGraph}
+                                    currentSelected={selectedGraph}
+                                >Lissage exponentielle des demandes</Tile>
+                                </div>
+                                { graph }
                             </div>
                         </div>
 
